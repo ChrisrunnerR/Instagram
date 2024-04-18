@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,6 +9,26 @@ import 'package:instagram/models/user.dart' as model;
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // get user details
+  Future<Map<String, dynamic>?> getUserDetails() async {
+    User? currentUser = _auth.currentUser!;
+    if (currentUser != null) {
+      try {
+        DocumentSnapshot snap =
+            await _firestore.collection('users').doc(currentUser.uid).get();
+
+        var data = snap.data() as Map<String, dynamic>?; // Cast as Map
+        return data;
+      } catch (e) {
+        print('Failed to fetch user data: $e');
+      }
+    } else {
+      print("No user logged in.");
+    }
+
+    return null;
+  }
 
   // SIGNUP USER +   //Future because all calls to firebase are async
   Future<String> signUpUser({
@@ -38,21 +57,30 @@ class AuthMethods {
         String photoUrl = await StorageMethods()
             .uploadImageToStorage('profilePics', file, false);
 
-        model.User user = model.User(
-          username: username,
-          uid: cred.user!.uid,
-          email: email,
-          bio: bio,
-          photoUrl: photoUrl,
-          following: [],
-          followers: [],
-        );
+        // model.User user = model.User(
+        //   username: username,
+        //   uid: cred.user!.uid,
+        //   email: email,
+        //   bio: bio,
+        //   photoUrl: photoUrl,
+        //   following: [],
+        //   followers: [],
+        // );
 
         // username / bio / pfp
-        await _firestore
-            .collection("users")
-            .doc(cred.user!.uid)
-            .set(user.toJason());
+        await _firestore.collection("users").doc(cred.user!.uid).set({
+          'username': username,
+          'uid': cred.user!.uid,
+          'email': email,
+          'bio': bio,
+          'followers': [],
+          'following': [],
+          'photoUrl': photoUrl,
+        });
+        // await _firestore
+        //     .collection("users")
+        //     .doc(cred.user!.uid)
+        //     .set(user.toJson());
         result = "success";
       }
     } catch (err) {
@@ -86,6 +114,6 @@ class AuthMethods {
 // SIGNOUT
 
   Future<void> _signOut() async {
-    await FirebaseAuth.instance.signOut();
+    await _auth.signOut();
   }
 }

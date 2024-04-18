@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:instagram/resources/auth_method.dart';
 import 'package:instagram/responsive/mobile_screen_layout.dart';
-import 'package:instagram/responsive/responsive_layout_screen.dart';
-import 'package:instagram/responsive/web_screen_layout.dart';
 import 'package:instagram/screens/signup_screen.dart';
 import 'package:instagram/utils/colors.dart';
 import 'package:instagram/utils/utils.dart';
@@ -35,21 +33,26 @@ class _LoginScreenState extends State<LoginScreen> {
     });
     String res = await AuthMethods().loginUser(
         email: _emailController.text, password: _passwordController.text);
-    if (res == "success ") {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => ResponsiveLayout(
-            mobileScreenLayout: MobileScreenLayout(),
-            webScreenLayout: WebScreenLayout(),
-          ),
-        ),
-      );
+    if (res == 'success') {
+      if (context.mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => MobileScreenLayout(),
+            ),
+            (route) => false);
+
+        setState(() {
+          _isLoading = false;
+        });
+      }
     } else {
-      showSnackBar(res, context);
+      setState(() {
+        _isLoading = false;
+      });
+      if (context.mounted) {
+        showSnackBar(res, context);
+      }
     }
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   Widget build(BuildContext context) {

@@ -7,8 +7,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:instagram/resources/auth_method.dart';
 import 'package:instagram/responsive/mobile_screen_layout.dart';
-import 'package:instagram/responsive/responsive_layout_screen.dart';
-import 'package:instagram/responsive/web_screen_layout.dart';
 import 'package:instagram/utils/colors.dart';
 import 'package:instagram/utils/utils.dart';
 import 'package:instagram/widgets/text_field_input.dart';
@@ -63,10 +61,7 @@ class _SignupScreenState extends State<SignupScreen> {
     else {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => ResponsiveLayout(
-            mobileScreenLayout: MobileScreenLayout(),
-            webScreenLayout: WebScreenLayout(),
-          ),
+          builder: (context) => MobileScreenLayout(),
         ),
       );
     }
