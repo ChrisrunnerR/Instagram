@@ -16,6 +16,7 @@ class MobileScreenLayout extends StatefulWidget {
 
 class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   String username = "";
+  String email = "";
 
   @override
   void initState() {
@@ -23,38 +24,14 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
     getUsername();
   }
 
-  // void getUsername() async {
-  //   User? currentUser = FirebaseAuth.instance.currentUser;
-  //   if (currentUser != null) {
-  //     try {
-  //       DocumentSnapshot snap = await FirebaseFirestore.instance
-  //           .collection('users')
-  //           .doc(currentUser.uid)
-  //           .get();
-
-  //       var data = snap.data() as Map<String, dynamic>?; // Cast as Map
-  //       if (data != null) {
-  //         setState(() {
-  //           username = data['username']
-  //               as String; // Ensure 'username' is cast as String
-  //         });
-  //       } else {
-  //         print("No data available for user: ${currentUser.uid}");
-  //       }
-  //     } catch (e) {
-  //       print('Failed to fetch user data: $e');
-  //     }
-  //   } else {
-  //     print("No user logged in.");
-  //   }
-  // }
-
+// should just be void
   void getUsername() async {
     var userDetails = await AuthMethods().getUserDetails();
 
     if (userDetails != null) {
       setState(() {
         username = userDetails['username'];
+        email = userDetails['email'];
       });
     }
   }
@@ -62,7 +39,15 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text("Home Page"), actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.exit_to_app),
+          onPressed: () {
+            AuthMethods().signOut();
+          },
+          tooltip: "Logout",
+        )
+      ]),
       body: Center(
         child: Text(username, style: TextStyle(color: Colors.white)),
       ),
