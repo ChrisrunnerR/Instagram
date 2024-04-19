@@ -21,12 +21,16 @@ class _AddPostScreenState extends State<AddPostScreen> {
   String _username = "";
   String _uid = "";
   final TextEditingController _descriptionController = TextEditingController();
+  bool _isLoading = false;
 
   void postImage(
     String uid,
     String username,
     String profImage,
   ) async {
+    setState(() {
+      _isLoading = true;
+    });
     print("uid : ${uid},  profile_Image ${_profImage}");
 
     try {
@@ -34,24 +38,22 @@ class _AddPostScreenState extends State<AddPostScreen> {
           _descriptionController.text, _file!, uid, username, profImage);
       if (res == "success") {
         showSnackBar('Posted!', context);
+        clearImage();
       } else {
         showSnackBar(res, context);
       }
     } catch (e) {
       showSnackBar(e.toString(), context);
     }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
   void initState() {
     super.initState();
     getUserDetails();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _descriptionController.dispose();
   }
 
 // should just be void
@@ -108,6 +110,16 @@ class _AddPostScreenState extends State<AddPostScreen> {
         });
   }
 
+  void clearImage() {
+    _file = null;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _descriptionController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return _file == null
@@ -120,7 +132,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
             appBar: AppBar(
               backgroundColor: mobileBackgroundColor,
               leading: IconButton(
-                onPressed: () {},
+                onPressed: clearImage,
                 icon: Icon(Icons.arrow_back),
               ),
               title: const Text('Post to'),
@@ -147,6 +159,12 @@ class _AddPostScreenState extends State<AddPostScreen> {
             ),
             body: Column(
               children: [
+                _isLoading
+                    ? const LinearProgressIndicator()
+                    : const Padding(
+                        padding: EdgeInsets.only(top: 0),
+                      ),
+                const Divider(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
