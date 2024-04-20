@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:instagram/models/user.dart';
 import 'package:instagram/providers/user_provider.dart';
+import 'package:instagram/resources/firestore_methods.dart';
 import 'package:instagram/utils/colors.dart';
 import 'package:instagram/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
@@ -93,7 +94,12 @@ class _PostCardState extends State<PostCard> {
           ),
           //IMAGE SECTION
           GestureDetector(
-            onDoubleTap: () {
+            onDoubleTap: () async {
+              await FirestoreMethods().likePost(
+                widget.snap['postId'],
+                user.uid,
+                widget.snap['likes'],
+              );
               setState(() {
                 isLikeAnimating = true;
               });
@@ -139,16 +145,28 @@ class _PostCardState extends State<PostCard> {
               //Like
               LikeAnimation(
                 // might need to fix this later i delclared the array showign up but empty
-                isAnimating: widget.snap['Likes'] != null &&
-                    widget.snap['Likes'] is List &&
-                    widget.snap['Likes'].contains(user.uid),
+                isAnimating: widget.snap['likes'] != null &&
+                    widget.snap['likes'] is List &&
+                    widget.snap['likes'].contains(user.uid),
                 smallLike: true,
                 child: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.favorite,
-                    color: Colors.white,
-                  ),
+                  onPressed: () async {
+                    await FirestoreMethods().likePost(
+                      widget.snap['postId'],
+                      user.uid,
+                      widget.snap['likes'],
+                    );
+                  },
+                  // user liked = red
+                  icon: widget.snap['likes'].contains(user.uid)
+                      ? Icon(
+                          Icons.favorite,
+                          color: Colors.red,
+                        )
+                      : Icon(
+                          Icons.favorite_outline,
+                          color: Colors.white,
+                        ),
                 ),
               ),
               //Comment

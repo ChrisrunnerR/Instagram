@@ -35,4 +35,21 @@ class FirestoreMethods {
   }
 
   // 4:36 Like post being added in
+  Future<void> likePost(String postId, String uid, List likes) async {
+    try {
+      // You already liked and press like again which inturn removes your like
+      if (likes.contains(uid)) {
+        await _firestore.collection('posts').doc(postId).update({
+          'likes': FieldValue.arrayRemove([uid]),
+        });
+      } else {
+        // if likes array doesnt contain ur uid then add
+        await _firestore.collection('posts').doc(postId).update({
+          'likes': FieldValue.arrayUnion([uid]),
+        });
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }
