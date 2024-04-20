@@ -1,8 +1,12 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:instagram/models/user.dart';
+import 'package:instagram/providers/user_provider.dart';
 import 'package:instagram/utils/colors.dart';
+import 'package:instagram/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class PostCard extends StatelessWidget {
   final snap;
@@ -14,6 +18,9 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // get instance of user
+
+    final User user = Provider.of<UserProvider>(context).getUser;
     //HEADER SECTION
     return Container(
       //color: Colors.pink,
@@ -89,11 +96,18 @@ class PostCard extends StatelessWidget {
           Row(
             children: [
               //Like
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.favorite,
-                  color: Colors.white,
+              LikeAnimation(
+                // might need to fix this later i delclared the array showign up but empty
+                isAnimating: snap['Likes'] != null &&
+                    snap['Likes'] is List &&
+                    snap['Likes'].contains(user.uid),
+                smallLike: true,
+                child: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.favorite,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               //Comment

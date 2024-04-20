@@ -18,24 +18,6 @@ class AuthMethods {
         await _firestore.collection('users').doc(currentUser.uid).get();
     return model.User.fromSnap(snap);
   }
-  // Future<Map<String, dynamic>?> getUserDetails() async {
-  //   User? currentUser = _auth.currentUser!;
-  //   if (currentUser != null) {
-  //     try {
-  //       DocumentSnapshot snap =
-  //           await _firestore.collection('users').doc(currentUser.uid).get();
-
-  //       var data = snap.data() as Map<String, dynamic>?; // Cast as Map
-  //       return data;
-  //     } catch (e) {
-  //       print('Failed to fetch user data: $e');
-  //     }
-  //   } else {
-  //     print("No user logged in.");
-  //   }
-
-  //   return null;
-  // }
 
   // SIGNUP USER +   //Future because all calls to firebase are async
   Future<String> signUpUser({
