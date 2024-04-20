@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:instagram/providers/user_provider.dart';
 import 'package:instagram/resources/auth_method.dart';
 import 'package:instagram/screens/add_post_screen.dart';
 import 'package:instagram/utils/colors.dart';
@@ -22,33 +23,24 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   String username = "";
   String email = "";
   late PageController pageController;
-
+  int _page = 0;
   @override
   void initState() {
     super.initState();
-    getUsername();
+    addData();
     pageController = PageController();
   }
 
   @override
   void dispose() {
-    super.dispose();
     pageController.dispose();
+    super.dispose();
   }
 
-// should just be void
-  void getUsername() async {
-    var userDetails = await AuthMethods().getUserDetails();
-
-    if (userDetails != null) {
-      setState(() {
-        username = userDetails['username'];
-        email = userDetails['email'];
-      });
-    }
+  addData() async {
+    UserProvider _userProvider = Provider.of(context, listen: false);
+    await _userProvider.refreshUser();
   }
-
-  int _page = 0;
 
   void NavigationTapped(int page) {
     pageController.jumpToPage(page);
@@ -62,6 +54,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
 
   @override
   Widget build(BuildContext context) {
+    model.User user = Provider.of<UserProvider>(context).getUser;
     return Scaffold(
       body: PageView(
         //in global variables

@@ -3,10 +3,13 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:instagram/models/user.dart' as model;
+import 'package:instagram/providers/user_provider.dart';
 import 'package:instagram/resources/auth_method.dart';
 import 'package:instagram/resources/firestore_methods.dart';
 import 'package:instagram/utils/colors.dart';
 import 'package:instagram/utils/utils.dart';
+import 'package:provider/provider.dart';
 
 class AddPostScreen extends StatefulWidget {
   const AddPostScreen({super.key});
@@ -53,20 +56,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
   @override
   void initState() {
     super.initState();
-    getUserDetails();
-  }
-
-// should just be void
-  void getUserDetails() async {
-    var userDetails = await AuthMethods().getUserDetails();
-
-    if (userDetails != null) {
-      setState(() {
-        _profImage = userDetails['photoUrl'];
-        _username = userDetails['username'];
-        _uid = userDetails['uid'];
-      });
-    }
   }
 
   _selectImage(BuildContext context) async {
@@ -122,6 +111,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
   @override
   Widget build(BuildContext context) {
+    model.User user = Provider.of<UserProvider>(context).getUser;
     return _file == null
         ? Center(
             child: IconButton(
@@ -170,7 +160,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CircleAvatar(
-                      backgroundImage: NetworkImage(_profImage),
+                      backgroundImage: NetworkImage(user.photoUrl),
                     ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.45,
