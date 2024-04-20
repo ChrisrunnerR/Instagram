@@ -20,9 +20,6 @@ class AddPostScreen extends StatefulWidget {
 
 class _AddPostScreenState extends State<AddPostScreen> {
   Uint8List? _file;
-  String _profImage = "";
-  String _username = "";
-  String _uid = "";
   final TextEditingController _descriptionController = TextEditingController();
   bool _isLoading = false;
 
@@ -34,7 +31,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
     setState(() {
       _isLoading = true;
     });
-    print("uid : ${uid},  profile_Image ${_profImage}");
 
     try {
       String res = await FirestoreMethods().uploadPost(
@@ -131,9 +127,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 TextButton(
                   onPressed: () => {
                     postImage(
-                      _uid,
-                      _username,
-                      _profImage,
+                      user.uid,
+                      user.username,
+                      user.photoUrl,
                     )
                   },
                   child: Text(

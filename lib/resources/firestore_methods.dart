@@ -24,6 +24,7 @@ class FirestoreMethods {
           'datePublished': DateTime.now(),
           'postUrl': photoUrl,
           'profImage': profImage,
+          'likes': [],
         });
         result = "success";
       }
