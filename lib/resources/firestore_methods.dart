@@ -5,6 +5,7 @@ import 'package:instagram/models/post.dart';
 import 'package:instagram/resources/storage_methods.dart';
 import 'package:uuid/uuid.dart';
 
+// added in functoinality to allow anyone to read / write
 class FirestoreMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -12,6 +13,7 @@ class FirestoreMethods {
       String username, String profImage) async {
     // asking uid here because we dont want to make extra calls to firebase auth when we can just get from our state management
     String res = "Some error occurred";
+
     try {
       String photoUrl =
           await StorageMethods().uploadImageToStorage('posts', file, true);
